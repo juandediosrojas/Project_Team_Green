@@ -18,7 +18,7 @@ Etc...
 ROL - Name
 1. QA - Brayan Ayala
 2. Develop - Maicol Cubides
-3. to be defined - Disneyyna Tarazona
-4. to be defined - Beatriz Perez Orozco
+3. Design - Disneyyna Tarazona
+4. UX/UI  - Beatriz Perez Orozco
 5. SM - Juan De Dios Rojas
 
