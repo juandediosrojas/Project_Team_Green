@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../components/Login.vue';
 import Dashboard from '../views/Dashboard.vue';
+import GestionActividades from '../views/GestionActividades.vue';
+import GestionUsuarios from '../views/GestionUsuarios.vue';
 import { auth } from "../firebase.js";
 
 const router = createRouter({
@@ -20,6 +22,18 @@ const router = createRouter({
       name: 'Dashboard',
       component: Dashboard,
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/gestion-actividades',
+      name: 'GestionActividades',
+      component: GestionActividades,
+      meta: { requiresAuth: true, allowedRoles: ['Administrador'] }
+    },
+    {
+      path: '/gestion-usuarios',
+      name: 'GestionUsuarios',
+      component: GestionUsuarios,
+      meta: { requiresAuth: true, allowedRoles: ['Administrador'] }
     },
   ],
 })

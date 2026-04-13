@@ -37,7 +37,8 @@
               <a class="navbar-item" @click="$router.push('/gestion-productos')" v-if="rol === 'Administrador'">Gestión
                 Productos</a>
               <a class="navbar-item" @click="abrirModal('empresa')" v-if="rol === 'Administrador'">Gestión Empresa</a>
-              <a class="navbar-item" @click="abrirModal('usuario')" v-if="rol === 'Administrador'">Gestión Usuarios</a>
+              <a class="navbar-item" @click="$router.push('/gestion-usuarios')" v-if="rol === 'Administrador'">Gestión Usuarios</a>
+              <a class="navbar-item" @click="$router.push('/gestion-actividades')" v-if="rol === 'Administrador'">Gestión Actividades</a>
             </div>
           </div>
 
