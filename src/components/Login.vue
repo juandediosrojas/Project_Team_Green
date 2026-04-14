@@ -93,13 +93,11 @@ export default {
             this.loading = true;
 
             try {
-                console.log('Intentando iniciar sesión con:', this.email);
                 const cred = await signInWithEmailAndPassword(auth, this.email, this.password);
-                console.log('Credenciales obtenidas:', cred);
                 const uid = cred.user.uid;
                 const userStore = useAuthStore();
                 await userStore.fetchUser(uid);
-                console.log('Usuario activo:', userStore.user.activo);  
+
                 if (userStore.user.activo === false) {
                     Swal.fire('Error', 'Tu cuenta está inactiva. Por favor, contacta al administrador.', 'error');
                     this.loading = false;
@@ -114,7 +112,7 @@ export default {
                     timer: 2000,
                     timerProgressBar: true,
                 });
-                console.log('Usuario autenticado:', cred.user);
+
                 this.$router.push('/dashboard');
             } catch (error) {
                 let errorMessage = 'Error de inicio de sesión: ';
