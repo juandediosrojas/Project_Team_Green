@@ -1,6 +1,5 @@
 <!-- src/views/Dashboard.vue -->
 <template>
-    <Headerd />
     <div class="dashboard-container" :class="{ 'light-mode': !isDarkMode }">
         <div class="container">
             <h1 class="dashboard-title">
@@ -23,13 +22,11 @@
 import { AgCharts } from 'ag-charts-vue3';
 import { ref, onMounted, computed, watch } from 'vue';
 import { db, collection, getDocs, query, orderBy, limit, where } from '../firebase';
-import Headerd from '../components/Headerd.vue';
 
 export default {
     name: 'Dashboard',
     components: {
         'ag-charts': AgCharts,
-        Headerd
     },
     setup() {
         const isDarkMode = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);

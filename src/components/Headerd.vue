@@ -18,7 +18,9 @@
 
       <div class="navbar-menu" :class="{ 'is-active': isActive }">
         <div class="navbar-start">
-          <div class="navbar-item has-dropdown is-hoverable" :class="{ 'is-active': activeDropdown === 'contactos' }">
+          <!-- CONTACTOS -->
+          <div class="navbar-item has-dropdown is-hoverable" :class="{ 'is-active': activeDropdown === 'contactos' }"
+            v-if="showModule('contactos')">
             <a class="navbar-link" @click="toggleDropdown('contactos')">
               <font-awesome-icon :icon="['fas', 'users']" /> Contactos
             </a>
@@ -28,33 +30,35 @@
             </div>
           </div>
 
-          <div class="navbar-item has-dropdown is-hoverable" :class="{ 'is-active': activeDropdown === 'operaciones' }">
+          <!-- OPERACIONES -->
+          <div class="navbar-item has-dropdown is-hoverable" :class="{ 'is-active': activeDropdown === 'operaciones' }"
+            v-if="showModule('operaciones')">
             <a class="navbar-link" @click="toggleDropdown('operaciones')"><font-awesome-icon :icon="['fas', 'gear']" />
               Operaciones</a>
             <div class="navbar-dropdown">
-              <a class="navbar-item" @click="$router.push('/gestion-servicios')" v-if="rol === 'Administrador'">Gestión
-                Servicios</a>
-              <a class="navbar-item" @click="$router.push('/gestion-productos')" v-if="rol === 'Administrador'">Gestión
-                Productos</a>
-              <a class="navbar-item" @click="abrirModal('empresa')" v-if="rol === 'Administrador'">Gestión Empresa</a>
-              <a class="navbar-item" @click="abrirModal('usuario')" v-if="rol === 'Administrador'">Gestión Usuarios</a>
+              <a class="navbar-item" @click="$router.push('/gestion-servicios')">Gestión Servicios</a>
+              <a class="navbar-item" @click="$router.push('/gestion-productos')">Gestión Productos</a>
+              <a class="navbar-item" @click="abrirModal('empresa')">Gestión Empresa</a>
+              <a class="navbar-item" @click="abrirModal('usuario')">Gestión Usuarios</a>
             </div>
           </div>
 
-          <div class="navbar-item has-dropdown is-hoverable" :class="{ 'is-active': activeDropdown === 'inventario' }">
+          <!-- INVENTARIO -->
+          <div class="navbar-item has-dropdown is-hoverable" :class="{ 'is-active': activeDropdown === 'inventario' }"
+            v-if="showModule('inventario')">
             <a class="navbar-link" @click="toggleDropdown('inventario')"><font-awesome-icon
                 :icon="['fas', 'clipboard-list']" /> Inventario</a>
             <div class="navbar-dropdown">
               <a class="navbar-item" @click="$router.push('/inventario')">Inventario</a>
               <a class="navbar-item" @click="$router.push('/movimiento-inventario')">Movimientos Inventario</a>
-              <a class="navbar-item" @click="abrirModal('inventario')" v-if="rol === 'Administrador'">Cargar
-                Inventario</a>
-              <a class="navbar-item" @click="abrirModal('ajusteInv')" v-if="rol === 'Administrador'">Ajuste
-                Inventario</a>
+              <a class="navbar-item" @click="abrirModal('inventario')">Cargar Inventario</a>
+              <a class="navbar-item" @click="abrirModal('ajusteInv')">Ajuste Inventario</a>
             </div>
           </div>
 
-          <div class="navbar-item has-dropdown is-hoverable" :class="{ 'is-active': activeDropdown === 'ventas' }">
+          <!-- VENTAS -->
+          <div class="navbar-item has-dropdown is-hoverable" :class="{ 'is-active': activeDropdown === 'ventas' }"
+            v-if="showModule('ventas')">
             <a class="navbar-link" @click="toggleDropdown('ventas')"><font-awesome-icon
                 :icon="['fas', 'dollar-sign']" /> Ventas</a>
             <div class="navbar-dropdown">
@@ -167,15 +171,19 @@
 
 <script>
 import Swal from 'sweetalert2';
-import { signOut } from '@firebase/auth';
 import { db, collection, getDoc, getDocs, query, where, updateDoc, doc, setDoc } from '../firebase';
-// import GestionEmpresa from '@/components/GestionEmpresa.vue';
-// import AjusteInventario from './AjusteInventario.vue';
-// import CreateUser from './CreateUser.vue';
-import { auth } from '@/firebase';
+import GestionEmpresa from '@/components/GestionEmpresa.vue';
+import AjusteInventario from './AjusteInventario.vue';
+import CreateUser from './CreateUser.vue';
 
 export default {
   name: 'Headerd',
+  props: {
+    module: {
+      type: String,
+      default: 'all', // 'all', 'contactos', 'operaciones', 'inventario', 'ventas'
+    }
+  },
   data() {
     return {
       modalEmpresaVisible: false,
@@ -194,19 +202,23 @@ export default {
       loteProducto: '',
       usarFechaVencimiento: false,
       fechaVencimiento: '',
-      activeDropdown: null, // Guarda el submenú abierto
+      activeDropdown: null,
       modalVisible: false,
       modalMode: 'cargar',
-      nombreEmpleado: localStorage.getItem('userName') || '',
-      rol: localStorage.getItem('userRole') || '',
+      nombreEmpleado: localStorage.getItem('userName') || 'Usuario',
+      rol: localStorage.getItem('userRole') || 'Administrador',
     };
   },
   components: {
-    // GestionEmpresa,
-    // AjusteInventario,
-    // CreateUser,
+    GestionEmpresa,
+    AjusteInventario,
+    CreateUser,
   },
   methods: {
+    showModule(moduleName) {
+      // Si module es 'all', muestra todos. Si no, solo muestra el módulo especificado.
+      return this.module === 'all' || this.module === moduleName;
+    },
     async buscarProducto() {
       this.isLoading = true;
       try {
@@ -526,8 +538,6 @@ export default {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            await signOut(auth); // Cierra la sesión del usuario en Firebase
-
             // Limpiar el almacenamiento local
             localStorage.clear();
 
@@ -540,8 +550,7 @@ export default {
             }).then(() => {
               // Redirigir al usuario a la página de inicio
               this.$router.push("/login");
-            })
-              ;
+            });
           } catch (error) {
             // Manejo de errores
             Swal.fire({
